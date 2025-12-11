@@ -7,51 +7,26 @@ on:
     branches: [ main, master, develop ]
 
 jobs:
-  build-and-test:
+  test:
     runs-on: ubuntu-latest
-
     defaults:
       run:
         working-directory: ./kktc-ulasim-app
 
-    strategy:
-      matrix:
-        node-version: [18.x, 20.x]
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: '20.x'
           cache: 'npm'
           cache-dependency-path: ./kktc-ulasim-app/package-lock.json
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run ESLint
-        run: npm run lint
-        continue-on-error: false
-
-      - name: Type check
-        run: npx tsc --noEmit
-
-      - name: Build application
-        run: npm run build
+      - run: npm ci
+      - run: npm run lint
+      - run: npx tsc --noEmit
+      - run: npm run build
         env:
-          # Supabase environment variables for build (if needed)
-          # These should be set as GitHub secrets in production
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || '' }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || '' }}
-
-      - name: Check build artifacts
-        run: |
-          if [ ! -d ".next" ]; then
-            echo "Build failed: .next directory not found"
-            exit 1
-          fi
-          echo "Build successful!"
 
