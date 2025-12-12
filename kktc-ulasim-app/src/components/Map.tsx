@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { supabase } from '@/src/lib/supabaseClient';
@@ -20,9 +20,28 @@ interface Stop {
   longitude: number;
 }
 
-export default function Map() {
+interface MapProps {
+  startCoords?: [number, number] | null;
+  endCoords?: [number, number] | null;
+}
+
+function MapUpdater({ routeCoordinates }: { routeCoordinates: [number, number][] | null }) {
+  const map = useMap();
+
+  useEffect(() => {
+    if (routeCoordinates && routeCoordinates.length > 0) {
+      const bounds = L.latLngBounds(routeCoordinates);
+      map.fitBounds(bounds, { padding: [50, 50] });
+    }
+  }, [routeCoordinates, map]);
+
+  return null;
+}
+
+export default function Map({ startCoords = null, endCoords = null }: MapProps) {
   const [stops, setStops] = useState<Stop[]>([]);
   const [loading, setLoading] = useState(true);
+  const [routeCoordinates, setRouteCoordinates] = useState<[number, number][] | null>(null);
 
   useEffect(() => {
     async function fetchStops() {
@@ -45,6 +64,41 @@ export default function Map() {
 
     fetchStops();
   }, []);
+
+  useEffect(() => {
+    async function fetchRoute() {
+      if (!startCoords || !endCoords) {
+        setRouteCoordinates(null);
+        return;
+      }
+
+      try {
+        const startLon = startCoords[1];
+        const startLat = startCoords[0];
+        const endLon = endCoords[1];
+        const endLat = endCoords[0];
+
+        const url = `https://router.project-osrm.org/route/v1/driving/${startLon},${startLat};${endLon},${endLat}?overview=full&geometries=geojson`;
+        
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.routes && data.routes[0] && data.routes[0].geometry) {
+          const coordinates: [number, number][] = data.routes[0].geometry.coordinates.map(
+            (coord: [number, number]) => [coord[1], coord[0]] as [number, number]
+          );
+          setRouteCoordinates(coordinates);
+        } else {
+          setRouteCoordinates(null);
+        }
+      } catch (error) {
+        console.error('Error fetching route:', error);
+        setRouteCoordinates(null);
+      }
+    }
+
+    fetchRoute();
+  }, [startCoords, endCoords]);
 
   if (loading) {
     return (
@@ -73,6 +127,15 @@ export default function Map() {
             <Popup>{stop.name}</Popup>
           </Marker>
         ))}
+        {routeCoordinates && (
+          <Polyline 
+            positions={routeCoordinates} 
+            color="#3b82f6" 
+            weight={4} 
+            opacity={0.7}
+          />
+        )}
+        <MapUpdater routeCoordinates={routeCoordinates} />
       </MapContainer>
     </div>
   );
