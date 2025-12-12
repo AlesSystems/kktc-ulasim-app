@@ -11,7 +11,10 @@ export default function ScheduleTimer({ time }: ScheduleTimerProps) {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    setIsMounted(true);
+    // Use setTimeout to avoid synchronous setState in effect
+    const timer = setTimeout(() => {
+      setIsMounted(true);
+    }, 0);
     
     const calculateMinutesLeft = () => {
       const now = new Date();
@@ -29,7 +32,10 @@ export default function ScheduleTimer({ time }: ScheduleTimerProps) {
     calculateMinutesLeft();
     const interval = setInterval(calculateMinutesLeft, 60000); // Update every 60 seconds
 
-    return () => clearInterval(interval);
+    return () => {
+      clearTimeout(timer);
+      clearInterval(interval);
+    };
   }, [time]);
 
   // Server render or initial client render: show static time

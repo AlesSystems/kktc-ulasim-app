@@ -36,7 +36,7 @@ export default function Home() {
   };
 
   return (
-    <div className="h-screen flex flex-col">
+    <div className="h-[100dvh] flex flex-col overflow-hidden">
       {/* Navbar */}
       <nav className="bg-white dark:bg-zinc-800 shadow-md z-10">
         <div className="px-6 py-4">
