@@ -41,7 +41,7 @@ export async function getSchedules(
     for (const route of routes) {
       const { data: schedules, error: schedulesError } = await supabase
         .from('schedules')
-        .select('departure_time, price')
+        .select('id, departure_time, price')
         .eq('route_id', route.id);
 
       if (schedulesError) {
@@ -52,6 +52,7 @@ export async function getSchedules(
       if (schedules) {
         for (const schedule of schedules) {
           results.push({
+            schedule_id: schedule.id,
             kalkis_yeri: route.origin,
             varis_yeri: route.destination,
             saat: schedule.departure_time,
@@ -93,5 +94,32 @@ export async function getUniqueLocations(): Promise<string[]> {
   } catch (error) {
     console.error('Error in getUniqueLocations:', error);
     return [];
+  }
+}
+
+export async function submitReport(
+  scheduleId: string,
+  issueType: string,
+  description: string
+): Promise<boolean> {
+  try {
+    const { error } = await supabase
+      .from('reports')
+      .insert({
+        schedule_id: scheduleId,
+        issue_type: issueType,
+        description: description,
+        created_at: new Date().toISOString(),
+      });
+
+    if (error) {
+      console.error('Error submitting report:', error);
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Error in submitReport:', error);
+    return false;
   }
 }

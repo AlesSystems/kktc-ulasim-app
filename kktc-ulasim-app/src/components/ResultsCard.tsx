@@ -1,6 +1,8 @@
 'use client';
 
+import { useState } from 'react';
 import { ScheduleResult } from '@/src/types';
+import ReportModal from './ReportModal';
 
 interface ResultsCardProps {
   results: ScheduleResult[];
@@ -10,6 +12,13 @@ interface ResultsCardProps {
 }
 
 export default function ResultsCard({ results, isLoading, origin, destination }: ResultsCardProps) {
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const [selectedSchedule, setSelectedSchedule] = useState<ScheduleResult | null>(null);
+
+  const handleReportClick = (schedule: ScheduleResult) => {
+    setSelectedSchedule(schedule);
+    setIsReportModalOpen(true);
+  };
   if (!origin || !destination) {
     return null;
   }
@@ -42,7 +51,7 @@ export default function ResultsCard({ results, isLoading, origin, destination }:
                 key={index}
                 className="bg-zinc-50 dark:bg-zinc-700/50 rounded-lg p-4 border border-zinc-200 dark:border-zinc-600 hover:shadow-md transition-shadow"
               >
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between gap-3">
                   <div className="flex-1">
                     <div className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-1">
                       {result.saat}
@@ -62,6 +71,15 @@ export default function ResultsCard({ results, isLoading, origin, destination }:
                       </div>
                     )}
                   </div>
+                  <button
+                    onClick={() => handleReportClick(result)}
+                    className="p-2 text-yellow-600 hover:text-yellow-700 dark:text-yellow-500 dark:hover:text-yellow-400 hover:bg-yellow-50 dark:hover:bg-yellow-900/20 rounded-lg transition-colors"
+                    title="Hata Bildir"
+                  >
+                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                  </button>
                 </div>
               </div>
             ))}
@@ -74,6 +92,18 @@ export default function ResultsCard({ results, isLoading, origin, destination }:
           </p>
         </div>
       </div>
+
+      {selectedSchedule && (
+        <ReportModal
+          isOpen={isReportModalOpen}
+          onClose={() => {
+            setIsReportModalOpen(false);
+            setSelectedSchedule(null);
+          }}
+          scheduleId={selectedSchedule.schedule_id}
+          routeInfo={`${selectedSchedule.firma_adi} - ${selectedSchedule.saat} (${selectedSchedule.kalkis_yeri} → ${selectedSchedule.varis_yeri})`}
+        />
+      )}
     </div>
   );
 }

@@ -22,6 +22,7 @@ export interface Schedule {
 }
 
 export interface ScheduleResult {
+  schedule_id: string;
   kalkis_yeri: string;
   varis_yeri: string;
   saat: string;
