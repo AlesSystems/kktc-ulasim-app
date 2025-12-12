@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { ScheduleResult } from '@/src/types';
 import ReportModal from './ReportModal';
+import ScheduleTimer from './ScheduleTimer';
 
 interface ResultsCardProps {
   results: ScheduleResult[];
@@ -53,9 +54,7 @@ export default function ResultsCard({ results, isLoading, origin, destination }:
               >
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex-1">
-                    <div className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-1">
-                      {result.saat}
-                    </div>
+                    <ScheduleTimer time={result.saat} />
                     <div className="text-sm text-zinc-600 dark:text-zinc-400">
                       {result.firma_adi}
                     </div>
