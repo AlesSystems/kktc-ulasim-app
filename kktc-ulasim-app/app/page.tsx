@@ -1,6 +1,11 @@
 'use client';
 
 import dynamic from 'next/dynamic';
+import { useState } from 'react';
+import SearchBox from '@/src/components/SearchBox';
+import ResultsCard from '@/src/components/ResultsCard';
+import { getSchedules } from '@/src/lib/supabaseClient';
+import { ScheduleResult } from '@/src/types';
 
 const Map = dynamic(() => import('@/src/components/Map'), {
   ssr: false,
@@ -15,6 +20,21 @@ const Map = dynamic(() => import('@/src/components/Map'), {
 });
 
 export default function Home() {
+  const [schedules, setSchedules] = useState<ScheduleResult[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchOrigin, setSearchOrigin] = useState('');
+  const [searchDestination, setSearchDestination] = useState('');
+
+  const handleSearch = async (origin: string, destination: string) => {
+    setIsSearching(true);
+    setSearchOrigin(origin);
+    setSearchDestination(destination);
+    
+    const results = await getSchedules(origin, destination);
+    setSchedules(results);
+    setIsSearching(false);
+  };
+
   return (
     <div className="h-screen flex flex-col">
       {/* Navbar */}
@@ -27,8 +47,17 @@ export default function Home() {
       </nav>
       
       {/* Map */}
-      <div className="flex-1">
+      <div className="flex-1 relative">
         <Map />
+        <SearchBox onSearch={handleSearch} isLoading={isSearching} />
+        {(searchOrigin && searchDestination) && (
+          <ResultsCard 
+            results={schedules} 
+            isLoading={isSearching}
+            origin={searchOrigin}
+            destination={searchDestination}
+          />
+        )}
       </div>
     </div>
   );
