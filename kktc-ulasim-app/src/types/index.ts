@@ -29,3 +29,24 @@ export interface ScheduleResult {
   firma_adi: string;
   fiyat: number | null;
 }
+
+// Smart Routing için yeni tipler
+export interface RouteLeg {
+  leg_number: number;
+  from: string;
+  to: string;
+  departure_time: string;
+  company: string;
+  route_name: string;
+  route_number?: string;
+  price: number;
+  schedule_id: string;
+}
+
+export interface SmartRoute {
+  route_type: 'direct' | 'transfer';
+  transfer_point?: string;
+  wait_time_minutes: number;
+  total_price: number;
+  legs: RouteLeg[];
+}

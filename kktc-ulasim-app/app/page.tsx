@@ -3,9 +3,9 @@
 import dynamic from 'next/dynamic';
 import { useState } from 'react';
 import SearchBox from '@/src/components/SearchBox';
-import ResultsCard from '@/src/components/ResultsCard';
-import { getSchedules } from '@/src/lib/supabaseClient';
-import { ScheduleResult } from '@/src/types';
+import SmartRoutesCard from '@/src/components/SmartRoutesCard';
+import { getSmartRoutes } from '@/src/lib/supabaseClient';
+import { SmartRoute } from '@/src/types';
 
 const Map = dynamic(() => import('@/src/components/Map'), {
   ssr: false,
@@ -20,7 +20,7 @@ const Map = dynamic(() => import('@/src/components/Map'), {
 });
 
 export default function Home() {
-  const [schedules, setSchedules] = useState<ScheduleResult[]>([]);
+  const [routes, setRoutes] = useState<SmartRoute[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [searchOrigin, setSearchOrigin] = useState('');
   const [searchDestination, setSearchDestination] = useState('');
@@ -30,8 +30,12 @@ export default function Home() {
     setSearchOrigin(origin);
     setSearchDestination(destination);
     
-    const results = await getSchedules(origin, destination);
-    setSchedules(results);
+    // Akıllı rotaları getir (şu anki saatten itibaren)
+    const now = new Date();
+    const currentTime = now.toTimeString().substring(0, 8); // HH:MM:SS formatı
+    
+    const smartRoutes = await getSmartRoutes(origin, destination, currentTime);
+    setRoutes(smartRoutes);
     setIsSearching(false);
   };
 
@@ -51,8 +55,8 @@ export default function Home() {
         <Map />
         <SearchBox onSearch={handleSearch} isLoading={isSearching} />
         {(searchOrigin && searchDestination) && (
-          <ResultsCard 
-            results={schedules} 
+          <SmartRoutesCard 
+            routes={routes} 
             isLoading={isSearching}
             origin={searchOrigin}
             destination={searchDestination}

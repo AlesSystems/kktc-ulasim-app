@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { ScheduleResult } from '@/src/types';
+import { ScheduleResult, SmartRoute } from '@/src/types';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
@@ -123,5 +123,30 @@ export async function submitReport(
   } catch (error) {
     console.error('Error in submitReport:', error);
     return false;
+  }
+}
+
+// Akıllı Rota Planlayıcı - PostgreSQL Fonksiyonunu Çağır
+export async function getSmartRoutes(
+  origin: string,
+  destination: string,
+  startTime: string = '00:00:00'
+): Promise<SmartRoute[]> {
+  try {
+    const { data, error } = await supabase.rpc('get_smart_routes', {
+      origin_city: origin,
+      destination_city: destination,
+      start_time: startTime,
+    });
+
+    if (error) {
+      console.error('Error fetching smart routes:', error);
+      return [];
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error('Error in getSmartRoutes:', error);
+    return [];
   }
 }
