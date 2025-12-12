@@ -56,7 +56,9 @@ export async function getSchedules(
             kalkis_yeri: route.origin,
             varis_yeri: route.destination,
             saat: schedule.departure_time,
-            firma_adi: (route.companies as Company | null)?.name || 'Bilinmiyor',
+            firma_adi: (Array.isArray(route.companies) 
+              ? route.companies[0]?.name 
+              : null) || 'Bilinmiyor',
             fiyat: schedule.price || null,
           });
         }
