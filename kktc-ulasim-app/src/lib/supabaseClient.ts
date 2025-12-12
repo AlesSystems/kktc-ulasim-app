@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { ScheduleResult } from '@/src/types';
+import { ScheduleResult, Company } from '@/src/types';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
@@ -56,7 +56,7 @@ export async function getSchedules(
             kalkis_yeri: route.origin,
             varis_yeri: route.destination,
             saat: schedule.departure_time,
-            firma_adi: (route.companies as any)?.name || 'Bilinmiyor',
+            firma_adi: (route.companies as Company | null)?.name || 'Bilinmiyor',
             fiyat: schedule.price || null,
           });
         }
