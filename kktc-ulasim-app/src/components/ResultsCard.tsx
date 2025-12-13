@@ -10,9 +10,10 @@ interface ResultsCardProps {
   isLoading: boolean;
   origin: string;
   destination: string;
+  className?: string;
 }
 
-export default function ResultsCard({ results, isLoading, origin, destination }: ResultsCardProps) {
+export default function ResultsCard({ results, isLoading, origin, destination, className }: ResultsCardProps) {
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [selectedSchedule, setSelectedSchedule] = useState<ScheduleResult | null>(null);
 
@@ -24,8 +25,10 @@ export default function ResultsCard({ results, isLoading, origin, destination }:
     return null;
   }
 
+  const containerClasses = className || "absolute bottom-4 left-4 right-4 md:left-auto md:right-4 md:top-4 md:bottom-auto z-[1000] w-[calc(100%-2rem)] md:w-96 max-h-[60vh] md:max-h-[80vh]";
+
   return (
-    <div className="absolute bottom-4 left-4 right-4 md:left-auto md:right-4 md:top-4 md:bottom-auto z-[1000] w-[calc(100%-2rem)] md:w-96 max-h-[60vh] md:max-h-[80vh] overflow-hidden flex flex-col">
+    <div className={`${containerClasses} overflow-hidden flex flex-col`}>
       <div className="bg-white/90 dark:bg-zinc-800/90 backdrop-blur-md rounded-2xl shadow-2xl flex flex-col max-h-full border border-zinc-200/50 dark:border-zinc-700/50 transition-all duration-300">
         {/* Header */}
         <div className="p-4 border-b border-zinc-200/50 dark:border-zinc-700/50 bg-white/50 dark:bg-zinc-900/50 backdrop-blur-sm sticky top-0 z-10">

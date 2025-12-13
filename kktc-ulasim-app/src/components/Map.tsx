@@ -23,6 +23,8 @@ interface Stop {
 interface MapProps {
   startCoords?: [number, number] | null;
   endCoords?: [number, number] | null;
+  startLocationName?: string;
+  endLocationName?: string;
 }
 
 interface UserLocation {
@@ -42,6 +44,26 @@ function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: numbe
   return R * c;
 }
 
+/**
+ * Validates if coordinates are within TRNC (Turkish Republic of Northern Cyprus) boundaries
+ * TRNC approximate boundaries:
+ * - Latitude: 35.0°N to 35.4°N
+ * - Longitude: 32.5°E to 34.5°E
+ */
+function isWithinTRNC(latitude: number, longitude: number): boolean {
+  const TRNC_MIN_LAT = 35.0;
+  const TRNC_MAX_LAT = 35.4;
+  const TRNC_MIN_LON = 32.5;
+  const TRNC_MAX_LON = 34.5;
+  
+  return (
+    latitude >= TRNC_MIN_LAT &&
+    latitude <= TRNC_MAX_LAT &&
+    longitude >= TRNC_MIN_LON &&
+    longitude <= TRNC_MAX_LON
+  );
+}
+
 function MapUpdater({ routeCoordinates, onMapReady }: { routeCoordinates: [number, number][] | null, onMapReady: (map: L.Map) => void }) {
   const map = useMap();
 
@@ -59,13 +81,38 @@ function MapUpdater({ routeCoordinates, onMapReady }: { routeCoordinates: [numbe
   return null;
 }
 
-export default function Map({ startCoords = null, endCoords = null }: MapProps) {
+export default function Map({ startCoords = null, endCoords = null, startLocationName, endLocationName }: MapProps) {
   const [stops, setStops] = useState<Stop[]>([]);
   const [loading, setLoading] = useState(true);
   const [routeCoordinates, setRouteCoordinates] = useState<[number, number][] | null>(null);
   const [userLocation, setUserLocation] = useState<UserLocation | null>(null);
   const [findingLocation, setFindingLocation] = useState(false);
   const [mapInstance, setMapInstance] = useState<L.Map | null>(null);
+  const [locationError, setLocationError] = useState<string | null>(null);
+  
+  const [computedStartCoords, setComputedStartCoords] = useState<[number, number] | null>(startCoords);
+  const [computedEndCoords, setComputedEndCoords] = useState<[number, number] | null>(endCoords);
+
+  useEffect(() => {
+    if (startCoords) setComputedStartCoords(startCoords);
+  }, [startCoords]);
+
+  useEffect(() => {
+    if (endCoords) setComputedEndCoords(endCoords);
+  }, [endCoords]);
+
+  useEffect(() => {
+    if (stops.length > 0) {
+      if (startLocationName) {
+        const stop = stops.find(s => s.name === startLocationName);
+        if (stop) setComputedStartCoords([stop.latitude, stop.longitude]);
+      }
+      if (endLocationName) {
+        const stop = stops.find(s => s.name === endLocationName);
+        if (stop) setComputedEndCoords([stop.latitude, stop.longitude]);
+      }
+    }
+  }, [stops, startLocationName, endLocationName]);
 
   useEffect(() => {
     async function fetchStops() {
@@ -91,16 +138,16 @@ export default function Map({ startCoords = null, endCoords = null }: MapProps) 
 
   useEffect(() => {
     async function fetchRoute() {
-      if (!startCoords || !endCoords) {
+      if (!computedStartCoords || !computedEndCoords) {
         setRouteCoordinates(null);
         return;
       }
 
       try {
-        const startLon = startCoords[1];
-        const startLat = startCoords[0];
-        const endLon = endCoords[1];
-        const endLat = endCoords[0];
+        const startLon = computedStartCoords[1];
+        const startLat = computedStartCoords[0];
+        const endLon = computedEndCoords[1];
+        const endLat = computedEndCoords[0];
 
         const url = `https://router.project-osrm.org/route/v1/driving/${startLon},${startLat};${endLon},${endLat}?overview=full&geometries=geojson`;
         
@@ -122,20 +169,32 @@ export default function Map({ startCoords = null, endCoords = null }: MapProps) 
     }
 
     fetchRoute();
-  }, [startCoords, endCoords]);
+  }, [computedStartCoords, computedEndCoords]);
 
   const handleFindMyLocation = () => {
     if (!navigator.geolocation) {
-      alert('Tarayıcınız konum servislerini desteklemiyor.');
+      setLocationError('Tarayıcınız konum servislerini desteklemiyor.');
+      setTimeout(() => setLocationError(null), 5000);
       return;
     }
 
     setFindingLocation(true);
+    setLocationError(null);
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
+        
+        // Validate if location is within TRNC boundaries
+        if (!isWithinTRNC(latitude, longitude)) {
+          setLocationError('Konumunuz KKTC sınırları dışında. Lütfen KKTC içindeyken konum bulucuyu kullanın.');
+          setFindingLocation(false);
+          setTimeout(() => setLocationError(null), 5000);
+          return;
+        }
+
         setUserLocation({ latitude, longitude });
+        setLocationError(null);
 
         // Find nearest stop
         if (stops.length > 0) {
@@ -167,8 +226,9 @@ export default function Map({ startCoords = null, endCoords = null }: MapProps) 
       },
       (error) => {
         console.error('Error getting location:', error);
-        alert('Konum alınamadı. Lütfen konum izinlerinizi kontrol edin.');
+        setLocationError('Konum alınamadı. Lütfen konum izinlerinizi kontrol edin.');
         setFindingLocation(false);
+        setTimeout(() => setLocationError(null), 5000);
       },
       {
         enableHighAccuracy: true,
@@ -228,6 +288,18 @@ export default function Map({ startCoords = null, endCoords = null }: MapProps) 
         )}
         <MapUpdater routeCoordinates={routeCoordinates} onMapReady={setMapInstance} />
       </MapContainer>
+      
+      {/* Error Message */}
+      {locationError && (
+        <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-[2001] max-w-md w-[calc(100%-2rem)]">
+          <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200 px-4 py-3 rounded-xl shadow-lg backdrop-blur-sm flex items-start gap-3">
+            <svg className="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <p className="text-sm font-medium">{locationError}</p>
+          </div>
+        </div>
+      )}
       
       {/* Find My Location Button */}
       <button

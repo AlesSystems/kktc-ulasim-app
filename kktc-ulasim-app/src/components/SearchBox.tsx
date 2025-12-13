@@ -6,13 +6,16 @@ import { getUniqueLocations } from '@/src/lib/supabaseClient';
 interface SearchBoxProps {
   onSearch: (origin: string, destination: string) => void;
   isLoading?: boolean;
+  className?: string;
 }
 
-export default function SearchBox({ onSearch, isLoading = false }: SearchBoxProps) {
+export default function SearchBox({ onSearch, isLoading = false, className }: SearchBoxProps) {
   const [origin, setOrigin] = useState('');
   const [destination, setDestination] = useState('');
   const [locations, setLocations] = useState<string[]>([]);
   const [loadingLocations, setLoadingLocations] = useState(true);
+
+  // ... (useEffect remains same) ...
 
   useEffect(() => {
     async function fetchLocations() {
@@ -29,8 +32,10 @@ export default function SearchBox({ onSearch, isLoading = false }: SearchBoxProp
     }
   };
 
+  const containerClasses = className || "absolute top-4 left-4 z-[1000] w-[calc(100%-2rem)] md:w-full md:max-w-sm";
+
   return (
-    <div className="absolute top-4 left-4 z-[1000] w-[calc(100%-2rem)] md:w-full md:max-w-sm">
+    <div className={containerClasses}>
       <div className="bg-white/90 dark:bg-zinc-800/90 backdrop-blur-md rounded-2xl shadow-2xl p-6 border border-zinc-200/50 dark:border-zinc-700/50 transition-all duration-300 hover:shadow-blue-500/10">
         <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-50 mb-4 flex items-center gap-2">
           <span className="bg-blue-100 dark:bg-blue-900/30 p-2 rounded-lg text-blue-600 dark:text-blue-400">

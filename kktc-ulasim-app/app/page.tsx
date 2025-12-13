@@ -1,68 +1,73 @@
 'use client';
 
-import dynamic from 'next/dynamic';
-import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import SearchBox from '@/src/components/SearchBox';
-import SmartRoutesCard from '@/src/components/SmartRoutesCard';
-import { getSmartRoutes } from '@/src/lib/supabaseClient';
-import { SmartRoute } from '@/src/types';
-
-const Map = dynamic(() => import('@/src/components/Map'), {
-  ssr: false,
-  loading: () => (
-    <div className="h-screen w-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-zinc-900 dark:to-zinc-800">
-      <div className="text-center">
-        <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-solid border-blue-500 border-t-transparent mb-4"></div>
-        <p className="text-xl font-semibold text-zinc-700 dark:text-zinc-300">Harita Yükleniyor...</p>
-      </div>
-    </div>
-  ),
-});
 
 export default function Home() {
-  const [routes, setRoutes] = useState<SmartRoute[]>([]);
-  const [isSearching, setIsSearching] = useState(false);
-  const [searchOrigin, setSearchOrigin] = useState('');
-  const [searchDestination, setSearchDestination] = useState('');
+  const router = useRouter();
 
-  const handleSearch = async (origin: string, destination: string) => {
-    setIsSearching(true);
-    setSearchOrigin(origin);
-    setSearchDestination(destination);
-    
-    // Akıllı rotaları getir (şu anki saatten itibaren)
-    const now = new Date();
-    const currentTime = now.toTimeString().substring(0, 8); // HH:MM:SS formatı
-    
-    const smartRoutes = await getSmartRoutes(origin, destination, currentTime);
-    setRoutes(smartRoutes);
-    setIsSearching(false);
+  const handleSearch = (origin: string, destination: string) => {
+    router.push(`/results?origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}`);
   };
 
   return (
-    <div className="h-[100dvh] flex flex-col overflow-hidden">
+    <div className="min-h-screen w-full bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-zinc-900 dark:to-zinc-800 flex flex-col relative overflow-hidden font-sans">
+      {/* Background Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 left-1/4 w-[50rem] h-[50rem] bg-blue-400/20 rounded-full blur-[100px] mix-blend-multiply dark:mix-blend-overlay"></div>
+        <div className="absolute bottom-0 right-1/4 w-[50rem] h-[50rem] bg-indigo-400/20 rounded-full blur-[100px] mix-blend-multiply dark:mix-blend-overlay"></div>
+      </div>
+
       {/* Navbar */}
-      <nav className="bg-white dark:bg-zinc-800 shadow-md z-10">
-        <div className="px-6 py-4">
-          <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
-            KKTC Ulaşım
-          </h1>
+      <nav className="relative z-10 px-6 py-6">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-3">
+             <div className="bg-gradient-to-tr from-blue-600 to-indigo-600 p-2.5 rounded-xl text-white shadow-lg shadow-blue-500/30">
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+             </div>
+             <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50 tracking-tight">
+               KKTC Ulaşım
+             </h1>
+          </div>
         </div>
       </nav>
-      
-      {/* Map */}
-      <div className="flex-1 relative">
-        <Map />
-        <SearchBox onSearch={handleSearch} isLoading={isSearching} />
-        {(searchOrigin && searchDestination) && (
-          <SmartRoutesCard 
-            routes={routes} 
-            isLoading={isSearching}
-            origin={searchOrigin}
-            destination={searchDestination}
-          />
-        )}
-      </div>
+
+      {/* Hero Section */}
+      <main className="flex-1 flex flex-col items-center justify-center px-4 relative z-10 pb-20">
+        <div className="w-full max-w-4xl mx-auto text-center mb-16 space-y-6">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 text-sm font-semibold mb-4 border border-blue-100 dark:border-blue-800/50">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+            </span>
+            Kuzey Kıbrıs'ın Akıllı Ulaşım Asistanı
+          </div>
+          
+          <h2 className="text-5xl md:text-6xl lg:text-7xl font-black text-zinc-900 dark:text-zinc-50 tracking-tight leading-[1.1]">
+            Yolculuğun <br/>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">En Akıllı Yolu</span>
+          </h2>
+          
+          <p className="text-lg md:text-xl text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto leading-relaxed font-medium">
+            Tüm otobüs seferlerini tek yerden sorgula, güzergahları karşılaştır ve saniyeler içinde rotanı oluştur.
+          </p>
+        </div>
+
+        <div className="w-full max-w-md relative">
+           {/* Center SearchBox */}
+           <SearchBox 
+             onSearch={handleSearch} 
+             className="relative w-full transform hover:scale-[1.02] transition-transform duration-500"
+           />
+        </div>
+      </main>
+
+      {/* Footer */}
+      <footer className="relative z-10 py-8 text-center text-sm text-zinc-500 dark:text-zinc-400 border-t border-zinc-200/50 dark:border-zinc-800/50 bg-white/30 dark:bg-zinc-900/30 backdrop-blur-sm">
+        <p>&copy; {new Date().getFullYear()} KKTC Ulaşım. Tüm hakları saklıdır.</p>
+      </footer>
     </div>
   );
 }
