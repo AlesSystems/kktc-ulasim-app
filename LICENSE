@@ -1,6 +1,109 @@
-MIT License
+MIT LİSANSI
 
-Copyright (c) 2025 AlesSystems
+Telif Hakkı (c) 2026 AlesSystems - Veri İşleme Merkezi
+
+Aşağıdaki koşullar altında, bu yazılım ve ilişkili belge dosyalarına ("Yazılım") sahip olan herhangi bir kişiye,
+ücretsiz olarak Yazılımı kullanma, kopyalama, değiştirme, birleştirme, yayımlama, dağıtma, alt lisanslama ve/veya
+Yazılımın kopyalarını satma izni verilir ve bu izin aşağıdaki koşullarla sınırlıdır:
+
+Yukarıdaki telif hakkı bildirimi ve bu izin bildirimi Yazılımın tüm kopyalarına veya önemli bölümlerine dahil edilmelidir.
+
+YAZILIM "OLDUĞU GİBİ" SAĞLANIR, HİÇBİR TÜRDE AÇIK VEYA ZIMNİ GARANTİ OLMAKSIZIN,
+SATILABİLİRLİK, BELİRLİ BİR AMACA UYGUNLUK VE İHLAL ETMEME GARANTİLERİ DAHİL ANCAK BUNLARLA SINIRLI OLMAMAK ÜZERE.
+HİÇBİR DURUMDA YAZARLAR VEYA TELİF HAKKI SAHİPLERİ, YAZILIM VEYA KULLANIM VEYA YAZILIMDAKİ DİĞER İŞLEMLERDEN
+KAYNAKLANAN, YAZILIMDAN KAYNAKLANAN VEYA YAZILIMLA İLİŞKİLİ BİR SÖZLEŞME, HAKSIZ FİİL VEYA BAŞKA BİR DURUMDA
+HERHANGİ BİR İDDİA, HASAR VEYA DİĞER SORUMLULUKLARDAN SORUMLU OLMAYACAKTIR.
+
+---
+
+EK AÇIKLAMALAR VE KULLANIM KOŞULLARI
+
+1. TANIMLAR
+
+   "Yazılım" terimi, bu lisans altında sağlanan KKTC Ulaşım Uygulaması'nın tüm kaynak kodunu,
+   derlenmiş versiyonlarını, belgelerini ve ilişkili dosyalarını kapsar.
+
+   "Kullanıcı" terimi, Yazılımı kullanan, kopyalayan, değiştiren veya dağıtan herhangi bir kişiyi veya kuruluşu ifade eder.
+
+2. İZİN VERİLEN KULLANIMLAR
+
+   Bu lisans altında, Kullanıcılar aşağıdaki haklara sahiptir:
+
+   a) Kullanım: Yazılımı herhangi bir amaç için kullanma hakkı
+   b) Kopyalama: Yazılımın kopyalarını oluşturma hakkı
+   c) Değiştirme: Yazılımı değiştirme ve türev çalışmalar oluşturma hakkı
+   d) Dağıtım: Yazılımı veya türev çalışmaları dağıtma hakkı
+   e) Alt Lisanslama: Yazılımı alt lisanslama hakkı
+
+3. YÜKÜMLÜLÜKLER
+
+   Kullanıcılar aşağıdaki yükümlülüklere uymalıdır:
+
+   a) Telif Hakkı Bildirimi: Yazılımın tüm kopyalarında ve türev çalışmalarda orijinal telif hakkı bildirimi
+      ve bu lisans metni korunmalıdır.
+
+   b) Değişiklik Bildirimi: Yazılımda yapılan önemli değişiklikler belirtilmelidir.
+
+   c) Kaynak Kod: Yazılımın kaynak kodu, mümkün olduğunca erişilebilir tutulmalıdır.
+
+4. KISITLAMALAR
+
+   Bu lisans aşağıdaki kısıtlamaları içerir:
+
+   a) Garanti Yok: Yazılım "olduğu gibi" sağlanır ve hiçbir garanti verilmez.
+
+   b) Sorumluluk Reddi: Yazılımın kullanımından kaynaklanan herhangi bir zarardan yazarlar sorumlu tutulamaz.
+
+   c) Ticari Marka: Bu lisans, AlesSystems veya proje sahiplerinin ticari markalarının kullanımına izin vermez.
+
+5. ÜÇÜNCÜ TARAFLAR
+
+   Bu Yazılım aşağıdaki üçüncü taraf yazılımları kullanmaktadır:
+
+   - Next.js (Vercel)
+   - React (Meta)
+   - Supabase
+   - Leaflet
+   - Tailwind CSS
+
+   Bu üçüncü taraf yazılımların kendi lisansları geçerlidir ve bu lisansın kapsamı dışındadır.
+   Kullanıcılar, bu üçüncü taraf yazılımların lisanslarını incelemekle yükümlüdür.
+
+6. VERİ VE GİZLİLİK
+
+   Bu Yazılım, Supabase gibi harici servisler kullanmaktadır. Kullanıcılar, bu servislerin
+   kendi gizlilik politikaları ve kullanım koşullarına tabi olduklarını kabul eder.
+
+7. SONLANDIRMA
+
+   Bu lisansın koşullarını ihlal eden herhangi bir kullanım, lisansı otomatik olarak sonlandırır.
+   Lisans sonlandığında, Yazılımı kullanma, kopyalama veya dağıtma hakları derhal sona erer.
+
+8. YASAL UYGULANABİLİRLİK
+
+   Bu lisans, Türkiye Cumhuriyeti ve Kuzey Kıbrıs Türk Cumhuriyeti yasalarına tabidir.
+   Herhangi bir hukuki anlaşmazlık durumunda, yetkili mahkemeler bu yasalar çerçevesinde karar verecektir.
+
+9. DEĞİŞİKLİKLER
+
+   Bu lisans metni, proje sahipleri tarafından önceden haber verilmeksizin değiştirilebilir.
+   Ancak, değişikliklerden önce yayımlanan Yazılım versiyonları, yayımlandıkları tarihteki lisans
+   koşullarına tabi olmaya devam eder.
+
+10. İLETİŞİM
+
+    Bu lisans hakkında sorularınız için lütfen proje sahipleriyle iletişime geçin:
+    
+    AlesSystems - Veri İşleme Merkezi
+
+---
+
+Bu lisans, MIT Lisansı'nın Türkçe çevirisidir ve orijinal İngilizce metinle aynı yasal geçerliliğe sahiptir.
+Herhangi bir çeviri hatası veya belirsizlik durumunda, orijinal İngilizce MIT Lisansı metni geçerlidir.
+
+MIT License (Original English Version)
+
+Copyright (c) 2026 AlesSystems - Veri İşleme Merkezi
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19,3 +122,4 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
