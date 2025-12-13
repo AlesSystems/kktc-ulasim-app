@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="72" height="72">
+  <rect width="512" height="512" fill="#2563eb" rx="128"/>
+  <g transform="translate(96, 96)">
+    <!-- Otobüs gövdesi -->
+    <rect x="40" y="60" width="240" height="200" rx="20" fill="#ffffff"/>
+    <!-- Cam -->
+    <rect x="60" y="80" width="80" height="80" rx="8" fill="#dbeafe"/>
+    <rect x="180" y="80" width="80" height="80" rx="8" fill="#dbeafe"/>
+    <!-- Tekerlekler -->
+    <circle cx="100" cy="280" r="30" fill="#1e3a8a"/>
+    <circle cx="100" cy="280" r="15" fill="#60a5fa"/>
+    <circle cx="220" cy="280" r="30" fill="#1e3a8a"/>
+    <circle cx="220" cy="280" r="15" fill="#60a5fa"/>
+    <!-- Detaylar -->
+    <rect x="150" y="200" width="20" height="60" rx="4" fill="#93c5fd"/>
+  </g>
+</svg>
