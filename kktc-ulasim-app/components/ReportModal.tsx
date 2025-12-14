@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { submitReport } from '@/src/lib/supabaseClient';
+import { submitReport } from '@/lib/supabaseClient';
 
 interface ReportModalProps {
   isOpen: boolean;

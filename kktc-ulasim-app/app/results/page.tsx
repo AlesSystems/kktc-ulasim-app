@@ -3,11 +3,11 @@
 import dynamic from 'next/dynamic';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useEffect, useState, Suspense } from 'react';
-import SmartRoutesCard from '@/src/components/SmartRoutesCard';
-import { getSmartRoutes } from '@/src/lib/supabaseClient';
-import { SmartRoute } from '@/src/types';
+import SmartRoutesCard from '@/components/SmartRoutesCard';
+import { getSmartRoutes } from '@/lib/supabaseClient';
+import { SmartRoute } from '@/types';
 
-const Map = dynamic(() => import('@/src/components/Map'), {
+const Map = dynamic(() => import('@/components/Map'), {
   ssr: false,
   loading: () => (
     <div className="h-full w-full flex items-center justify-center bg-gray-100 dark:bg-zinc-800 rounded-xl">
@@ -90,8 +90,8 @@ function ResultsContent() {
              </div>
           </div>
 
-          {/* Right Column: Map (Sticky) */}
-          <div className="hidden lg:block h-full sticky top-4 bg-white rounded-2xl shadow-sm overflow-hidden border border-zinc-200 dark:border-zinc-700 relative z-0">
+          {/* Right Column: Map (Visible on all screens) */}
+          <div className="h-[400px] lg:h-full lg:sticky lg:top-4 bg-white rounded-2xl shadow-sm overflow-hidden border border-zinc-200 dark:border-zinc-700 relative z-0">
              <Map 
                startLocationName={origin} 
                endLocationName={destination} 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { getUniqueLocations } from '@/src/lib/supabaseClient';
+import { getUniqueLocations } from '@/lib/supabaseClient';
 
 interface SearchBoxProps {
   onSearch: (origin: string, destination: string) => void;

@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import SearchBox from '@/src/components/SearchBox';
+import SearchBox from '@/components/SearchBox';
 
 export default function Home() {
   const router = useRouter();

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { SmartRoute } from '@/src/types';
+import { SmartRoute } from '@/types';
 import ReportModal from './ReportModal';
 import SkeletonCard from './SkeletonCard';
 

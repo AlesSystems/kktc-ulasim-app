@@ -50,3 +50,57 @@ export interface SmartRoute {
   total_price: number;
   legs: RouteLeg[];
 }
+
+// Admin Dashboard Types
+export interface AdminStats {
+  totalSchedules: number;
+  pendingReports: number;
+  totalStops: number;
+  totalCompanies: number;
+}
+
+export interface ReportWithSchedule {
+  id: string;
+  schedule_id: string;
+  issue_type: string;
+  description: string;
+  is_resolved: boolean;
+  created_at: string;
+  schedules: {
+    id: string;
+    departure_time: string;
+    routes: {
+      id: string;
+      origin: string;
+      destination: string;
+      companies: {
+        name: string;
+      };
+    };
+  };
+}
+
+export interface ScheduleWithRoute {
+  id: string;
+  departure_time: string;
+  price: number | null;
+  route_id: string;
+  routes: {
+    id: string;
+    origin: string;
+    destination: string;
+    route_name: string;
+    route_number?: string;
+    companies: {
+      id: string;
+      name: string;
+    };
+  };
+}
+
+export interface Stop {
+  id: string;
+  name: string;
+  latitude?: number;
+  longitude?: number;
+}

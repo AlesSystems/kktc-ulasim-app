@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ScheduleResult } from '@/src/types';
+import { ScheduleResult } from '@/types';
 import ReportModal from './ReportModal';
 import ScheduleTimer from './ScheduleTimer';
 
