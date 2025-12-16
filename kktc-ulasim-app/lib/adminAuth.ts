@@ -28,3 +28,8 @@ export async function clearAdminSession() {
   const cookieStore = await cookies();
   cookieStore.delete(ADMIN_COOKIE_NAME);
 }
+
+export async function requireAdmin(): Promise<{ authenticated: boolean }> {
+  const isAuthenticated = await getAdminSession();
+  return { authenticated: isAuthenticated };
+}
