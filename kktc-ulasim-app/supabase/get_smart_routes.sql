@@ -17,6 +17,8 @@ RETURNS TABLE (
     legs JSONB
 ) 
 LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
 AS $$
 BEGIN
     RETURN QUERY
@@ -44,8 +46,8 @@ BEGIN
         FROM routes r
         INNER JOIN schedules s ON s.route_id = r.id
         INNER JOIN companies c ON c.id = r.company_id
-        WHERE r.origin = origin_city
-          AND r.destination = destination_city
+        WHERE TRIM(LOWER(r.origin)) = TRIM(LOWER(origin_city))
+          AND TRIM(LOWER(r.destination)) = TRIM(LOWER(destination_city))
           AND s.departure_time >= start_time
     ),
     
@@ -83,13 +85,13 @@ BEGIN
         FROM routes r1
         INNER JOIN schedules s1 ON s1.route_id = r1.id
         INNER JOIN companies c1 ON c1.id = r1.company_id
-        INNER JOIN routes r2 ON r2.origin = r1.destination
+        INNER JOIN routes r2 ON TRIM(LOWER(r2.origin)) = TRIM(LOWER(r1.destination))
         INNER JOIN schedules s2 ON s2.route_id = r2.id
         INNER JOIN companies c2 ON c2.id = r2.company_id
-        WHERE r1.origin = origin_city
-          AND r2.destination = destination_city
-          AND r1.destination != destination_city  -- Aktarma noktası hedef değil
-          AND r2.origin != origin_city           -- Aktarma noktası başlangıç değil
+        WHERE TRIM(LOWER(r1.origin)) = TRIM(LOWER(origin_city))
+          AND TRIM(LOWER(r2.destination)) = TRIM(LOWER(destination_city))
+          AND TRIM(LOWER(r1.destination)) != TRIM(LOWER(destination_city))  -- Aktarma noktası hedef değil
+          AND TRIM(LOWER(r2.origin)) != TRIM(LOWER(origin_city))           -- Aktarma noktası başlangıç değil
           AND s1.departure_time >= start_time
           -- Zaman Kontrolü: En az 15 dakika, en fazla 4 saat bekleme
           AND s2.departure_time >= s1.departure_time + INTERVAL '15 minutes'

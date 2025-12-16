@@ -16,7 +16,6 @@ async function getSchedules() {
         origin,
         destination,
         route_name,
-        route_number,
         companies!inner(
           id,
           name

@@ -235,6 +235,67 @@ FROM get_smart_routes('Güzelyurt', 'Karpaz');
 
 ## 🐛 Olası Hatalar ve Çözümleri
 
+### ⚠️ Hata: "Rota Bulunamadı" Mesajı Her Zaman Görünüyor
+
+**1. Fonksiyon Supabase'de Yüklü mü?**
+
+Supabase Dashboard → SQL Editor'de çalıştır:
+```sql
+SELECT 
+  proname as function_name,
+  pg_get_functiondef(oid) as function_definition
+FROM pg_proc 
+WHERE proname = 'get_smart_routes';
+```
+
+Eğer boş sonuç dönüyorsa:
+- ✅ `supabase/get_smart_routes.sql` dosyasını Supabase SQL Editor'de çalıştırın
+- ✅ `SECURITY DEFINER` ve `SET search_path = public` satırlarının eklendiğinden emin olun
+
+**2. RLS (Row Level Security) Politikaları**
+
+Supabase Dashboard → Authentication → Policies'de kontrol edin:
+
+```sql
+-- Routes tablosu için
+CREATE POLICY "Allow anonymous read access to routes"
+ON routes FOR SELECT
+TO anon
+USING (true);
+
+-- Schedules tablosu için
+CREATE POLICY "Allow anonymous read access to schedules"
+ON schedules FOR SELECT
+TO anon
+USING (true);
+
+-- Companies tablosu için
+CREATE POLICY "Allow anonymous read access to companies"
+ON companies FOR SELECT
+TO anon
+USING (true);
+```
+
+**3. Veritabanında Veri Kontrolü**
+
+```sql
+-- Veri var mı kontrol et
+SELECT COUNT(*) FROM routes;
+SELECT COUNT(*) FROM schedules;
+SELECT COUNT(*) FROM companies;
+
+-- Şehir isimlerini kontrol et
+SELECT DISTINCT origin FROM routes ORDER BY origin;
+SELECT DISTINCT destination FROM routes ORDER BY destination;
+```
+
+**4. Frontend'de Debug**
+
+Browser Console'u (F12) açın ve şunları kontrol edin:
+- ✅ `🔍 Calling get_smart_routes with:` log mesajını görüyor musunuz?
+- ✅ `❌ Supabase RPC Error:` mesajı var mı?
+- ✅ Network sekmesinde `rpc/get_smart_routes` çağrısının response'unu kontrol edin
+
 ### Hata: "function get_smart_routes does not exist"
 **Çözüm**: SQL fonksiyonunu Supabase'e yüklemeyi unutmuşsunuz. Yukarıdaki kurulum adımlarını takip edin.
 
@@ -243,8 +304,8 @@ FROM get_smart_routes('Güzelyurt', 'Karpaz');
 
 ### Hata: Boş sonuç döndürüyor
 **Olası Nedenler**:
-1. Belirtilen şehir isimleri veritabanında yok
-2. `start_time` çok ileri bir saat
+1. Belirtilen şehir isimleri veritabanında yok (Büyük/küçük harf duyarlı!)
+2. `start_time` çok ileri bir saat (Geçici çözüm: '00:00:00' kullanın)
 3. Veritabanında yeterli veri yok
 
 **Kontrol**:
@@ -252,6 +313,9 @@ FROM get_smart_routes('Güzelyurt', 'Karpaz');
 -- Şehir isimlerini kontrol et
 SELECT DISTINCT origin FROM routes;
 SELECT DISTINCT destination FROM routes;
+
+-- Fonksiyonu test et
+SELECT * FROM get_smart_routes('Güzelyurt', 'Lefkoşa', '00:00:00');
 ```
 
 ---

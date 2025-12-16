@@ -11,14 +11,14 @@ async function getReports() {
     .select(
       `
       *,
-      schedules!inner(
+      schedules(
         id,
         departure_time,
-        routes!inner(
+        routes(
           id,
           origin,
           destination,
-          companies!inner(
+          companies(
             name
           )
         )
@@ -33,7 +33,23 @@ async function getReports() {
     return [];
   }
 
-  return data as ReportWithSchedule[];
+  console.log('📊 Reports fetched:', data?.length || 0);
+  console.log('📋 Raw reports data:', JSON.stringify(data, null, 2));
+
+  // Filter out reports with missing relations
+  const validReports = (data || []).filter(report => {
+    const isValid = report.schedules && 
+                    report.schedules.routes && 
+                    report.schedules.routes.companies;
+    if (!isValid) {
+      console.warn('⚠️ Report with invalid relations:', report.id);
+    }
+    return isValid;
+  });
+
+  console.log('✅ Valid reports:', validReports.length);
+
+  return validReports as ReportWithSchedule[];
 }
 
 export default async function ReportsPage() {

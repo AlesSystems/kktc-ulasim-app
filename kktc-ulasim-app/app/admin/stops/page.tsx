@@ -1,27 +1,48 @@
-import { MapPin, Construction } from 'lucide-react';
+import { createClient } from '@/lib/supabase/server';
+import StopsTable from '@/components/admin/StopsTable';
+import { MapPin } from 'lucide-react';
+import type { Stop } from '@/types';
 
-export default function StopsPage() {
+async function getStops() {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from('stops')
+    .select('*')
+    .order('name', { ascending: true });
+
+  if (error) {
+    console.error('Error fetching stops:', error);
+    return [];
+  }
+
+  return data as Stop[];
+}
+
+export default async function StopsPage() {
+  const stops = await getStops();
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center">
-          <MapPin className="w-7 h-7 mr-3" />
-          Durak Yönetimi
-        </h1>
-        <p className="text-gray-600 dark:text-gray-400 mt-1">
-          Durakları görüntüle ve yönet
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center">
+            <MapPin className="w-7 h-7 mr-3" />
+            Durak Yönetimi
+          </h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">
+            Durakları görüntüle ve yönet
+          </p>
+        </div>
+        <div className="text-sm text-gray-600 dark:text-gray-400">
+          <span className="font-semibold text-gray-900 dark:text-white">
+            {stops.length}
+          </span>{' '}
+          durak
+        </div>
       </div>
 
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-12 text-center">
-        <Construction className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-          Yakında Gelecek
-        </h3>
-        <p className="text-gray-600 dark:text-gray-400">
-          Durak yönetim modülü şu anda geliştirilme aşamasındadır.
-        </p>
-      </div>
+      <StopsTable initialStops={stops} />
     </div>
   );
 }

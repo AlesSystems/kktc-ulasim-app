@@ -88,11 +88,14 @@ export async function getUniqueLocations(): Promise<string[]> {
 
     const locationsSet = new Set<string>();
     routes?.forEach((route) => {
-      if (route.origin) locationsSet.add(route.origin);
-      if (route.destination) locationsSet.add(route.destination);
+      // Trim ve normalize et
+      if (route.origin) locationsSet.add(route.origin.trim());
+      if (route.destination) locationsSet.add(route.destination.trim());
     });
 
-    return Array.from(locationsSet).sort();
+    const sortedLocations = Array.from(locationsSet).sort();
+    console.log('📍 Available locations:', sortedLocations);
+    return sortedLocations;
   } catch (error) {
     console.error('Error in getUniqueLocations:', error);
     return [];
@@ -111,6 +114,7 @@ export async function submitReport(
         schedule_id: scheduleId,
         issue_type: issueType,
         description: description,
+        is_resolved: false,
         created_at: new Date().toISOString(),
       });
 
@@ -133,20 +137,50 @@ export async function getSmartRoutes(
   startTime: string = '00:00:00'
 ): Promise<SmartRoute[]> {
   try {
+    // Şehir isimlerini normalize et (trim ve case-insensitive için hazırlık)
+    const normalizedOrigin = origin.trim();
+    const normalizedDestination = destination.trim();
+    
+    console.log('🔍 Calling get_smart_routes with:', { 
+      origin: normalizedOrigin, 
+      destination: normalizedDestination, 
+      startTime 
+    });
+    
     const { data, error } = await supabase.rpc('get_smart_routes', {
-      origin_city: origin,
-      destination_city: destination,
+      origin_city: normalizedOrigin,
+      destination_city: normalizedDestination,
       start_time: startTime,
     });
 
     if (error) {
-      console.error('Error fetching smart routes:', error);
+      console.error('❌ Supabase RPC Error:', error);
+      console.error('Error Code:', error.code);
+      console.error('Error Message:', error.message);
+      console.error('Error Details:', error.details);
+      console.error('Error Hint:', error.hint);
+      
+      // Hata durumunda kullanıcıya bilgi ver
+      if (error.code === '42883') {
+        console.error('⚠️ Fonksiyon bulunamadı! get_smart_routes.sql dosyasını çalıştırın.');
+      }
+      
       return [];
     }
 
+    console.log('✅ Smart Routes Data:', data);
+    console.log('📊 Number of routes found:', data?.length || 0);
+    
+    if (!data || data.length === 0) {
+      console.warn('⚠️ Hiç rota bulunamadı. Kontrol edin:');
+      console.warn('  1. Şehir isimleri doğru mu? (Büyük/küçük harf önemli!)');
+      console.warn('  2. Veritabanında bu şehirler arasında sefer var mı?');
+      console.warn('  3. comprehensive_diagnostic.sql ile şehir listesini kontrol edin');
+    }
+    
     return data || [];
   } catch (error) {
-    console.error('Error in getSmartRoutes:', error);
+    console.error('❌ Exception in getSmartRoutes:', error);
     return [];
   }
 }

@@ -37,9 +37,18 @@ function ResultsContent() {
       }
       
       setLoading(true);
-      const now = new Date();
-      const currentTime = now.toTimeString().substring(0, 8);
-      const data = await getSmartRoutes(origin, destination, currentTime);
+      // Zaman filtresini kaldır - tüm seferleri göster
+      // Geçmiş saatlerdeki seferler de gösterilsin (bugünün seferleri için)
+      const currentTime = '00:00:00';
+      
+      console.log('🔍 Searching routes:', { 
+        origin: origin.trim(), 
+        destination: destination.trim(), 
+        currentTime 
+      });
+      
+      const data = await getSmartRoutes(origin.trim(), destination.trim(), currentTime);
+      console.log('📊 Routes found:', data.length);
       setRoutes(data);
       setLoading(false);
     }
